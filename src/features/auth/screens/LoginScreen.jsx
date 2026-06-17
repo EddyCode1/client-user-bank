@@ -14,7 +14,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import useAuthStore from '../store/useAuthStore';
-import { authService } from '../service/authService';
+import { authService } from '../services/authService';
 
 // Paleta Premium Matte Dark con acento Turquesa
 const colors = {
