@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { authService } from '../service/authService';
+import { authService } from '../services/authService';
 
 // Paleta Premium Matte Dark con acento Turquesa
 const colors = {

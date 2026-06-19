@@ -115,12 +115,12 @@ export default function LoginScreen() {
 
             {/* Input Contraseña */}
             <View style={styles.inputGroup}>
-              <div style={styles.labelRow}>
+              <View style={styles.labelRow}>
                 <Text style={styles.label}>Contraseña</Text>
                 <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
                   <Text style={styles.forgotPasswordText}>¿Olvidaste tu contraseña?</Text>
                 </TouchableOpacity>
-              </div>
+              </View>
               <View style={[styles.inputWrapper, errors.password ? styles.inputErrorBorder : null]}>
                 <MaterialCommunityIcons name="lock-outline" size={18} color={colors.muted} style={styles.inputIcon} />
                 <TextInput

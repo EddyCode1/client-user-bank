@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { authService } from '../service/authService';
+import { authService } from '../services/authService';
 
 // Paleta de colores Premium Matte Dark con acentos Turquesas
 const colors = {
@@ -80,7 +80,7 @@ export default function ForgotPasswordScreen() {
             <View style={styles.badgeContainer}>
               <Text style={styles.badgeText}>Banco del Quetzal</Text>
             </View>
-            <h1 style={styles.title}>Recuperar contraseña</h1>
+            <Text style={styles.title}>Recuperar contraseña</Text>
             <Text style={styles.subtitle}>Te enviaremos instrucciones a tu correo.</Text>
           </View>
 
