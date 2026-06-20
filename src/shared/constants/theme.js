@@ -1,15 +1,15 @@
 export const COLORS = {
-    primary: "#08316D", // Azul principal igual que la web
-    primaryDark: "#08316D", // Azul principal igual que la web
-    secondary: "#64748b", // Slate 500
-    background: "#f8fafc", // Slate 50
+    primary: "#00ADB5",
+    primaryDark: "#00858C",
+    secondary: "#64748b",
+    background: "#f8fafc",
     surface: "#ffffff",
-    text: "#0f172a", // Slate 900
-    textLight: "#64748b", // Slate 500
-    error: "#ef4444", // Red 500
-    success: "#22c55e", // Green 500
-    warning: "#f59e0b", // Amber 500
-    border: "#e2e8f0", // Slate 200
+    text: "#0f172a",
+    textLight: "#64748b",
+    error: "#ef4444",
+    success: "#22c55e",
+    warning: "#f59e0b",
+    border: "#e2e8f0",
 };
 
 export const SPACING = {

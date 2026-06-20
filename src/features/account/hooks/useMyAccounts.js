@@ -1,11 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { accountClient } from '../api/accountClient'; // Adaptado a tu nueva estructura de API
+import { accountService } from '../services/accountService';
 
-// Encapsula la carga de las cuentas propias del usuario logueado y el resumen
-// (total de cuentas, balance consolidado). Usado por AccountPage, DashboardPage
-// y cualquier otro consumidor que necesite el estado financiero del cliente.
-// Maneja loading, errores y refresco bajo demanda.
 export function useMyAccounts({ autoLoad = true, limit = 50 } = {}) {
   const [accounts, setAccounts] = useState([]);
   const [summary, setSummary] = useState(null);
@@ -15,7 +11,7 @@ export function useMyAccounts({ autoLoad = true, limit = 50 } = {}) {
   const loadAccounts = useCallback(async () => {
     setLoading(true);
     try {
-      const result = await accountClient.getMyAccounts({ limit });
+      const result = await accountService.getMyAccounts({ limit });
       if (result.success) {
         setAccounts(result.data.items);
       } else {
@@ -31,7 +27,7 @@ export function useMyAccounts({ autoLoad = true, limit = 50 } = {}) {
   const loadSummary = useCallback(async () => {
     setSummaryLoading(true);
     try {
-      const result = await accountClient.getMyInfo();
+      const result = await accountService.getMyInfo();
       if (result.success) {
         setSummary(result.data.summary);
       } else {

@@ -3,7 +3,7 @@ import {
   View, Text, ScrollView, TextInput, TouchableOpacity, 
   ActivityIndicator, Alert 
 } from 'react-native';
-import { transactionService } from '../service/transactionService';
+import { transactionService } from '../services/transactionService';
 import { styles, colors } from './AdminDepositsScreen.styles';
 
 export default function AdminDepositsScreen() {
