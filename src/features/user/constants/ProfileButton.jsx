@@ -10,7 +10,7 @@ import {
 import { profileStyles as styles } from '../constants/ProfileStyles';
 
 // Importación del asset adaptada a la ruta local de React Native
-const defaultProfile = require('../../../assets/default-profile.png');
+const defaultProfile = require('../../../../assets/avatarDefault.png');
 
 const ProfileButton = ({ imageUrl, email, onEditProfile, onLogout, onChangePhoto }) => {
   const [open, setOpen] = useState(false);
