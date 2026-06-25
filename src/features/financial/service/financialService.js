@@ -1,73 +1,71 @@
-/**
- * Servicio simulado de datos financieros para tarjetas y préstamos
- * Optimizado con validaciones seguras para entornos React Native (Android/iOS)
- */
+import { bankingClient } from '../../../shared/api/adminClient';
 
-import {
-  CREDIT_CARDS,
-  LOANS,
-  FINANCIAL_HISTORY,
-} from '../constants/financialData';
+function parseError(error, fallback) {
+  if (!error?.response && (error?.code === 'ERR_NETWORK' || error?.message === 'Network Error')) {
+    return 'No hay conexión con el servidor bancario';
+  }
+  return error?.response?.data?.message || fallback || error?.message || 'Error desconocido';
+}
 
-const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-/**
- * Normaliza y filtra el historial de transacciones.
- * Incluye safe-guards para prevenir fallos de parsing de fechas y strings nulos en mobile.
- */
-const filterHistory = (history, filters) => {
-  const { startDate, endDate, type, currency, status, search } = filters || {};
-
-  // Helper para parsear fechas de forma segura en motores JS de dispositivos móviles (como JSCore/Hermes)
-  const parseSafeDate = (dateStr) => {
-    if (!dateStr) return null;
-    // Convierte "YYYY-MM-DD" a formato amigable reemplazando guiones para evitar desfases de zona horaria
-    return new Date(dateStr.replace(/-/g, '/'));
-  };
-
-  return history.filter((item) => {
-    if (!item) return false;
-
-    const itemDate = parseSafeDate(item.date);
-    const filterStart = parseSafeDate(startDate);
-    const filterEnd = parseSafeDate(endDate);
-
-    // Validaciones de rangos cronológicos
-    const afterStart = filterStart && itemDate ? itemDate >= filterStart : true;
-    const beforeEnd = filterEnd && itemDate ? itemDate <= filterEnd : true;
-    
-    // Validaciones de selectores
-    const matchesType = type && type !== 'Todos' ? item.type === type : true;
-    const matchesCurrency = currency && currency !== 'Todos' ? item.currency === currency : true;
-    const matchesStatus = status && status !== 'Todos' ? item.status === status : true;
-    
-    // Búsqueda por texto con safe-guards contra campos undefined o nulos
-    const cleanSearch = String(search || '').toLowerCase().trim();
-    const matchesSearch = cleanSearch
-      ? (item.description || '').toLowerCase().includes(cleanSearch) ||
-        (item.category || '').toLowerCase().includes(cleanSearch)
-      : true;
-
-    return afterStart && beforeEnd && matchesType && matchesCurrency && matchesStatus && matchesSearch;
-  });
-};
+function normalizeHistory(payload) {
+  const data = payload?.data ?? payload;
+  const items = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.transactions)
+    ? data.transactions
+    : Array.isArray(data?.history)
+    ? data.history
+    : Array.isArray(data?.items)
+    ? data.items
+    : [];
+  return items.map((item) => ({
+    id: item.id || item._id,
+    date: item.date || item.createdAt?.split('T')[0] || '',
+    description: item.description || item.transaction_name || item.concept || '',
+    type: item.type || item.transaction_type || '',
+    amount: Number(item.amount ?? item.transaction_amount ?? 0),
+    currency: item.currency || item.currency_from || 'GTQ',
+    status: item.status || 'Completado',
+    category: item.category || '',
+  }));
+}
 
 export const financialService = {
   getCreditCards: async () => {
-    await delay(200);
-    return { success: true, data: CREDIT_CARDS };
+    try {
+      const response = await bankingClient.get('/credit-cards/me');
+      const cards = response.data?.cards ?? response.data?.items ?? [];
+      return { success: true, data: cards };
+    } catch (error) {
+      return { success: false, error: parseError(error, 'No se pudieron cargar las tarjetas'), data: [] };
+    }
   },
-  
+
   getLoans: async () => {
-    await delay(200);
-    return { success: true, data: LOANS };
+    try {
+      const response = await bankingClient.get('/loans/me');
+      const loans = response.data?.loans ?? response.data?.items ?? [];
+      return { success: true, data: loans };
+    } catch (error) {
+      return { success: false, error: parseError(error, 'No se pudieron cargar los préstamos'), data: [] };
+    }
   },
-  
+
   getFinancialHistory: async (filters = {}) => {
-    await delay(200);
-    return {
-      success: true,
-      data: filterHistory(FINANCIAL_HISTORY, filters),
-    };
+    try {
+      const params = {};
+      if (filters.startDate) params.startDate = filters.startDate;
+      if (filters.endDate) params.endDate = filters.endDate;
+      if (filters.type && filters.type !== 'Todos') params.type = filters.type;
+      if (filters.search) params.search = filters.search;
+
+      const response = await bankingClient.get('/transactions/history/me', { params });
+      return { success: true, data: normalizeHistory(response.data) };
+    } catch (error) {
+      if (error?.response?.status === 404) {
+        return { success: true, data: [] };
+      }
+      return { success: false, error: parseError(error, 'No se pudo cargar el historial'), data: [] };
+    }
   },
 };

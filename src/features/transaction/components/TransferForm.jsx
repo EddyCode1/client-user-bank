@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert } from 'react-native';
+import React, { useState, useEffect, useMemo } from 'react';
+import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Platform } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import useTransactionStore from '../store/useTransactionStore';
+import { useMyAccounts } from '../../account/hooks/useMyAccounts';
 import { styles, colors } from './TransferForm.styles';
 
 export default function TransferForm({ onSuccess, initialDestinationAccountId = '' }) {
@@ -13,7 +15,43 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
   });
   const [errors, setErrors] = useState({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [selectedAccount, setSelectedAccount] = useState(null);
   const { createTransfer } = useTransactionStore();
+
+  const {
+    accounts: myAccounts,
+  } = useMyAccounts({ autoLoad: true });
+
+  const formatCurrency = (value) => {
+    const num = Number(value ?? 0);
+    return 'Q ' + num.toLocaleString('es-GT', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
+
+  const balanceError = useMemo(() => {
+    const amount = parseFloat(formData.amount);
+    if (!selectedAccount || !amount || isNaN(amount)) return null;
+    const balance = Number(selectedAccount.balance ?? 0);
+    const limit = Number(selectedAccount.monthlyLimit ?? 0);
+    if (amount > balance) {
+      return `Saldo insuficiente. Tu saldo disponible es ${formatCurrency(balance)}`;
+    }
+    if (limit > 0 && amount > limit) {
+      return `Supera el límite por transferencia de ${formatCurrency(limit)}`;
+    }
+    return null;
+  }, [formData.amount, selectedAccount]);
+
+  const isSubmitDisabled = useMemo(() => {
+    if (isSubmitting) return true;
+    if (!selectedAccount) return true;
+    const amount = parseFloat(formData.amount);
+    if (!amount || isNaN(amount) || amount <= 0) return true;
+    const balance = Number(selectedAccount.balance ?? 0);
+    const limit = Number(selectedAccount.monthlyLimit ?? 0);
+    if (amount > balance) return true;
+    if (limit > 0 && amount > limit) return true;
+    return false;
+  }, [isSubmitting, formData.amount, selectedAccount]);
 
   useEffect(() => {
     const trimmed = initialDestinationAccountId?.trim();
@@ -120,6 +158,7 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
           reference: '',
           concept: ''
         });
+        setSelectedAccount(null);
         setErrors({});
         onSuccess?.();
       } else {
@@ -142,16 +181,63 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
         {/* Source Account Field */}
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Cuenta Origen *</Text>
-          <TextInput
-            style={[styles.input, errors.sourceAccountId && styles.inputError]}
-            value={formData.sourceAccountId}
-            onChangeText={(val) => handleFieldChange('sourceAccountId', val)}
-            placeholder="Ej: tu número de cuenta"
-            placeholderTextColor={colors.muted}
-            autoCapitalize="none"
-            autoCorrect={false}
-          />
+          <View style={[styles.pickerContainer, errors.sourceAccountId && styles.pickerContainerError]}>
+            <Picker
+              selectedValue={formData.sourceAccountId}
+              dropdownIconColor={colors.muted}
+              onValueChange={(val) => {
+                const account = myAccounts.find((a) => a.accountNumber === val);
+                setSelectedAccount(account || null);
+                handleFieldChange('sourceAccountId', val);
+              }}
+            >
+              <Picker.Item label="Selecciona tu cuenta" value="" color={colors.muted} />
+              {myAccounts.map((account) => (
+                <Picker.Item
+                  key={account.id || account.accountNumber}
+                  label={`${account.accountNumber} - ${account.type}`}
+                  value={account.accountNumber}
+                  color={Platform.OS === 'ios' ? colors.text : undefined}
+                />
+              ))}
+            </Picker>
+          </View>
           {errors.sourceAccountId && <Text style={styles.errorText}>{errors.sourceAccountId}</Text>}
+          {selectedAccount && (
+            <Text style={styles.balanceText}>
+              Saldo disponible: {formatCurrency(selectedAccount.balance)}
+            </Text>
+          )}
+          {selectedAccount && (
+            <View style={styles.dailyLimitBox}>
+              <Text style={styles.dailyLimitRow}>
+                <Text style={styles.dailyLimitLabel}>Límite por transferencia: </Text>
+                {formatCurrency(selectedAccount.monthlyLimit ?? 2000)}
+              </Text>
+              <Text style={styles.dailyLimitRow}>
+                <Text style={styles.dailyLimitLabel}>Transferido hoy: </Text>
+                {formatCurrency(selectedAccount.dailyTransferredAmount ?? 0)}
+              </Text>
+              {(() => {
+                const dailyLimit = Number(selectedAccount.dailyLimit ?? 10000);
+                const transferred = Number(selectedAccount.dailyTransferredAmount ?? 0);
+                const available = Math.max(0, dailyLimit - transferred);
+                if (available <= 0) {
+                  return (
+                    <Text style={[styles.dailyLimitRow, styles.dailyLimitDanger]}>
+                      Alcanzaste tu límite diario de transferencias
+                    </Text>
+                  );
+                }
+                return (
+                  <Text style={[styles.dailyLimitRow, available < 100 && styles.dailyLimitWarning]}>
+                    <Text style={styles.dailyLimitLabel}>Disponible hoy: </Text>
+                    {formatCurrency(available)}
+                  </Text>
+                );
+              })()}
+            </View>
+          )}
         </View>
 
         {/* Destination Account Field */}
@@ -173,7 +259,7 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
         <View style={styles.fieldGroup}>
           <Text style={styles.label}>Monto (GTQ) *</Text>
           <TextInput
-            style={[styles.input, errors.amount && styles.inputError]}
+            style={[styles.input, (errors.amount || balanceError) && styles.inputError]}
             value={formData.amount}
             onChangeText={(val) => handleFieldChange('amount', val)}
             placeholder="0.00"
@@ -182,8 +268,15 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
           />
           {errors.amount ? (
             <Text style={styles.errorText}>{errors.amount}</Text>
+          ) : balanceError ? (
+            <Text style={styles.errorText}>{balanceError}</Text>
           ) : (
             <Text style={styles.hintText}>Máximo 2 decimales</Text>
+          )}
+          {!balanceError && !errors.amount && selectedAccount && (
+            <Text style={styles.limitText}>
+              Límite por transferencia: {formatCurrency(selectedAccount.monthlyLimit ?? 2000)}
+            </Text>
           )}
         </View>
 
@@ -221,9 +314,9 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
 
         {/* Submit Button */}
         <TouchableOpacity
-          style={[styles.btnSubmit, isSubmitting && styles.btnSubmitDisabled]}
+          style={[styles.btnSubmit, isSubmitDisabled && styles.btnSubmitDisabled]}
           onPress={handleSubmit}
-          disabled={isSubmitting}
+          disabled={isSubmitDisabled}
         >
           {isSubmitting ? (
             <ActivityIndicator size="small" color="#FFFFFF" />

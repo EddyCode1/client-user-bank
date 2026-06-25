@@ -3,12 +3,9 @@ import useAuthStore from '../../features/auth/store/useAuthStore';
 import { attachTokenRefreshInterceptor } from './tokenRefresh';
 import { handleSessionError } from './sessionErrorHandler';
 
-// IP de desarrollo unificada para pruebas en emuladores y dispositivos físicos
-const DEV_MACHINE_IP = '192.168.1.45'; 
-
 const authClient = axios.create({
   baseURL: (
-    process.env.VITE_AUTH_URL || `http://${DEV_MACHINE_IP}:5025/api/v1/Auth`
+    process.env.EXPO_PUBLIC_API_AUTH_URL || 'http://192.168.1.45:5025/api/v1'
   ).replace(/\/$/, ''),
   headers: { 'Content-Type': 'application/json' },
 });

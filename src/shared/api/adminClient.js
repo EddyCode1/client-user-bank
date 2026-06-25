@@ -3,20 +3,13 @@ import useAuthStore from '../../features/auth/store/useAuthStore';
 import { attachTokenRefreshInterceptor } from './tokenRefresh';
 import { handleSessionError } from './sessionErrorHandler';
 
-// IP de desarrollo para pruebas en emuladores/dispositivos (Reemplaza con tu IP local de ser necesario)
-const DEV_MACHINE_IP = '192.168.1.45'; 
-
-/**
- * En React Native se leen las variables desde process.env (vía react-native-dotenv)
- * Se provee un fallback automático con la IP local de tu máquina en vez de 'localhost'
- */
 const apiBase = (
-  process.env.VITE_API_BASE || `http://${DEV_MACHINE_IP}:5025/api/v1`
+  process.env.EXPO_PUBLIC_API_AUTH_URL || 'http://192.168.1.45:5025/api/v1'
 ).replace(/\/$/, '');
 
 /** Servidor Node (Sistema Bancario): transacciones, depósitos, cuentas, etc. */
 const bankingApiBase = (
-  process.env.VITE_BANKING_API_BASE || `http://${DEV_MACHINE_IP}:3000/SistemaBancarioAdmin/v1`
+  process.env.EXPO_PUBLIC_API_BANKING_URL || 'http://192.168.1.45:3000/SistemaBancarioAdmin/v1'
 ).replace(/\/$/, '');
 
 /** AdminController (.NET) → api/v1/admin */

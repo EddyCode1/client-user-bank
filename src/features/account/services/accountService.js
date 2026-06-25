@@ -49,6 +49,8 @@ function mapAccount(raw) {
     ownerName: raw.owner?.nombre || raw.owner?.name || raw.owner?.username || raw.ownerName || raw.username || raw.email || '',
     dailyLimit: Number(raw.dailyLimit ?? raw.limiteDiario ?? raw.daily_transfer_limit ?? raw.daily_limit ?? 0),
     monthlyLimit: Number(raw.monthlyLimit ?? raw.limiteMensual ?? raw.single_transfer_limit ?? raw.monthly_limit ?? 0),
+    dailyTransferredAmount: Number(raw.dailyTransferredAmount ?? raw.montoTransferidoHoy ?? raw.daily_transferred_amount ?? 0),
+    lastTransferDate: raw.lastTransferDate ?? raw.ultimaTransferencia ?? raw.last_transfer_date ?? null,
     createdAt: raw.createdAt || raw.created_at || raw.createdOn,
     raw,
   };

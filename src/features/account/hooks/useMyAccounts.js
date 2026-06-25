@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert } from 'react-native';
-import { accountClient } from '../api/accountClient'; // Adaptado a tu nueva estructura de API
+import { accountService as accountClient } from '../services/accountService';
 
 // Encapsula la carga de las cuentas propias del usuario logueado y el resumen
 // (total de cuentas, balance consolidado). Usado por AccountPage, DashboardPage
