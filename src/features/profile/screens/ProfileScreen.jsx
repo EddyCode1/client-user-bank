@@ -15,11 +15,11 @@ import {
 import * as ImagePicker from 'expo-image-picker';
 
 import useAuthStore from '../../auth/store/useAuthStore';
-import { authService } from '../../auth/service/authService';
+import { authService } from '../../auth/services/authService';
 import { publicClient } from '../../../shared/api/adminClient';
 
 // Imagen por defecto local para el entorno móvil
-const DEFAULT_PROFILE = require('../../../assets/default-profile.png');
+const DEFAULT_PROFILE = require('../../../../assets/avatarDefault.png');
 
 // Paleta de colores Premium Matte Dark
 const colors = {
