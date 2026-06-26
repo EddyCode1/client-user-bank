@@ -10,7 +10,7 @@ import TransferForm from '../components/TransferForm';
 // Notas de desarrollo: Reemplazar los placeholders por tus componentes móviles cuando se completen sus migraciones
 import DepositForm from '../components/DepositForm'; 
 import TransactionDetail from '../components/TransactionDetail';
-import AdminDepositsPanel from '../components/AdminDepositsPanel';
+import AdminDepositsScreen from './AdminDepositsScreen';
 
 import { styles, colors } from './TransactionScreen.styles';
 
@@ -332,7 +332,7 @@ export default function TransactionScreen({ navigation, route }) {
         )}
 
         {/* Pestaña: Depósitos Admin */}
-        {activeTab === 'admin-deposits' && isAdmin && <AdminDepositsPanel />}
+        {activeTab === 'admin-deposits' && isAdmin && <AdminDepositsScreen />}
 
         {/* COMPONENTE DE PAGINACIÓN */}
         {showPagination && (activeTab === 'my-transactions' || activeTab === 'history') && (
