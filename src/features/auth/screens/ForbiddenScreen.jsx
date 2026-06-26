@@ -54,7 +54,7 @@ export default function ForbiddenScreen() {
           {/* Botón Volver al panel (Lobby) */}
           <TouchableOpacity 
             style={[styles.btn, styles.btnPrimary]} 
-            onPress={() => navigation.navigate('Lobby')} // Ajusta 'Lobby' al nombre de tu ruta del menú principal
+            onPress={() => navigation.navigate('Dashboard')}
             activeOpacity={0.8}
           >
             <View style={styles.btnContent}>

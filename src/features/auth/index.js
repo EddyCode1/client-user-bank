@@ -1,7 +1,3 @@
-// src/features/auth/index.js
-
-// Exportamos desde las carpetas internas de la feature
-export * from './screens/LoginScreen';
-export * from './screens/RegisterScreen';
-export * from './screens/ForgotPasswordScreen';
-// ... etcétera
+export { default as LoginScreen } from "./screens/LoginScreen";
+export { default as RegisterScreen } from "./screens/RegisterScreen";
+export { useAuth } from "./hooks/useAuth";

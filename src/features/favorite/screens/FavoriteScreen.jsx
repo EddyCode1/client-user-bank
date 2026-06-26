@@ -186,7 +186,7 @@ export default function FavoriteScreen() {
   const handleTransfer = (accountNumber) => {
     if (!accountNumber) return;
     // Transición nativa pasando parámetros de ruta
-    navigation.navigate('Transactions', { tab: 'transfer', dest: accountNumber });
+    navigation.navigate('Transacciones', { screen: 'TransactionMain', params: { tab: 'transfer', dest: accountNumber } });
   };
 
   return (

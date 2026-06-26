@@ -14,7 +14,7 @@ import * as Sharing from 'expo-sharing';
 
 // Servicios y Constantes compartidas
 import { financialService } from '../service/financialService';
-import { CREDIT_CARDS, LOANS, TRANSACTION_FILTER_OPTIONS } from '../constants/financialData';
+import { TRANSACTION_FILTER_OPTIONS } from '../constants/financialData';
 
 // Componentes ya migrados a Mobile
 import FinancialSummaryCard from '../components/FinancialSummaryCard';
@@ -33,6 +33,7 @@ const colors = {
   successText: '#22C55E',
   skyBg: 'rgba(0, 173, 181, 0.15)',
   skyText: '#00ADB5',
+  danger: '#EF4444',
 };
 
 const formatCurrency = (value, currency = 'GTQ') =>
@@ -81,13 +82,34 @@ export default function FinancialScreen() {
   const [filters, setFilters] = useState(initialFilters);
   const [loading, setLoading] = useState(true);
   const [historyLoading, setHistoryLoading] = useState(true);
+  const [cardsError, setCardsError] = useState(null);
+  const [loansError, setLoansError] = useState(null);
+  const [historyError, setHistoryError] = useState(null);
 
   useEffect(() => {
     const loadData = async () => {
       setLoading(true);
       try {
-        setCreditCards(CREDIT_CARDS);
-        setLoans(LOANS);
+        const [cardsResult, loansResult] = await Promise.all([
+          financialService.getCreditCards(),
+          financialService.getLoans(),
+        ]);
+
+        if (cardsResult.success) {
+          setCreditCards(cardsResult.data);
+          setCardsError(null);
+        } else {
+          setCreditCards([]);
+          setCardsError(cardsResult.error);
+        }
+
+        if (loansResult.success) {
+          setLoans(loansResult.data);
+          setLoansError(null);
+        } else {
+          setLoans([]);
+          setLoansError(loansResult.error);
+        }
       } finally {
         setLoading(false);
       }
@@ -98,10 +120,14 @@ export default function FinancialScreen() {
   useEffect(() => {
     const loadHistory = async () => {
       setHistoryLoading(true);
+      setHistoryError(null);
       try {
         const result = await financialService.getFinancialHistory(filters);
         if (result.success) {
           setHistory(result.data);
+        } else {
+          setHistory([]);
+          setHistoryError(result.error);
         }
       } finally {
         setHistoryLoading(false);
@@ -203,6 +229,11 @@ export default function FinancialScreen() {
       {/* Sección: Tarjetas de Crédito */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Tarjetas de Crédito</Text>
+        {cardsError && (
+          <View style={styles.innerLoading}>
+            <Text style={styles.errorText}>{cardsError}</Text>
+          </View>
+        )}
         <View style={styles.listGap}>
           {creditCards.map((card) => (
             <View key={card.id} style={styles.entityCard}>
@@ -247,6 +278,11 @@ export default function FinancialScreen() {
       {/* Sección: Préstamos */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Préstamos Activos</Text>
+        {loansError && (
+          <View style={styles.innerLoading}>
+            <Text style={styles.errorText}>{loansError}</Text>
+          </View>
+        )}
         <View style={styles.listGap}>
           {loans.map((loan) => (
             <View key={loan.id} style={styles.entityCard}>
@@ -297,6 +333,10 @@ export default function FinancialScreen() {
             <View style={styles.innerLoading}>
               <ActivityIndicator color={colors.primary} size="small" />
               <Text style={styles.loadingText}>Filtrando transacciones...</Text>
+            </View>
+          ) : historyError ? (
+            <View style={styles.innerLoading}>
+              <Text style={styles.errorText}>{historyError}</Text>
             </View>
           ) : (
             <FinancialHistoryList items={history} />
@@ -465,5 +505,10 @@ const styles = StyleSheet.create({
   loadingText: {
     color: colors.muted,
     fontSize: 13,
+  },
+  errorText: {
+    color: colors.danger,
+    fontSize: 13,
+    textAlign: 'center',
   },
 });

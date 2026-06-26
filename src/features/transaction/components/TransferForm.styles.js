@@ -9,6 +9,7 @@ export const colors = {
   muted: '#A0A0A0',
   primary: '#00ADB5', // Turquesa
   danger: '#E11D48',
+  warning: '#F59E0B',
 };
 
 export const styles = StyleSheet.create({
@@ -86,5 +87,49 @@ export const styles = StyleSheet.create({
     color: '#FFFFFF',
     fontWeight: '700',
     fontSize: 14,
+  },
+  pickerContainer: {
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderWidth: 1,
+    borderRadius: 14,
+    overflow: 'hidden',
+  },
+  pickerContainerError: {
+    borderColor: colors.danger,
+  },
+  balanceText: {
+    color: '#22C55E',
+    fontSize: 13,
+    fontWeight: '600',
+    marginTop: 2,
+  },
+  limitText: {
+    color: colors.muted,
+    fontSize: 11,
+    textAlign: 'right',
+    marginTop: 2,
+  },
+  dailyLimitBox: {
+    backgroundColor: '#1A1A1A',
+    borderRadius: 12,
+    padding: 12,
+    marginTop: 8,
+    gap: 4,
+  },
+  dailyLimitRow: {
+    fontSize: 12,
+    color: colors.muted,
+  },
+  dailyLimitLabel: {
+    fontWeight: '600',
+  },
+  dailyLimitDanger: {
+    color: colors.danger,
+    fontWeight: '700',
+  },
+  dailyLimitWarning: {
+    color: colors.warning,
+    fontWeight: '600',
   },
 });
