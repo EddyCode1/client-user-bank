@@ -48,7 +48,7 @@ export default function UserDetailScreen() {
   if (loading) {
     return (
       <View style={[styles.container, styles.centerContent]}>
-        <ActivityIndicator size="large" color="var(--primary)" />
+        <ActivityIndicator size="large" color="#00ADB5" />
         <Text style={styles.loadingText}>Cargando información del usuario...</Text>
       </View>
     );
@@ -61,7 +61,7 @@ export default function UserDetailScreen() {
         <Text style={styles.errorText}>No se encontró el usuario</Text>
         <TouchableOpacity 
           style={styles.primaryButton}
-          onPress={() => navigation.navigate('UsersList')} // Cambiar por el nombre de tu stack/pantalla destino
+          onPress={() => navigation.goBack()}
         >
           <Text style={styles.primaryButtonText}>Volver a usuarios</Text>
         </TouchableOpacity>

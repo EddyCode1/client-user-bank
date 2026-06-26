@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 // Rutas actualizadas a la arquitectura del proyecto en React Native
 import useUserStore from '../store/useUserStore';
-import userService from '../services/userService';
+import userService from '../service/userService';
 
 /**
  * Hook para gestionar el listado general de usuarios

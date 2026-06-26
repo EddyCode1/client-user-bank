@@ -86,7 +86,7 @@ export default function UsersScreen() {
 
   const handleViewDetail = (userId) => {
     // Redirección usando React Navigation pasando parámetros
-    navigation.navigate('UserDetail', { userId });
+    navigation.navigate('DetalleUsuario', { userId });
   };
 
   const handleCreateUser = () => {

@@ -52,7 +52,13 @@ export default function QuickLinks({ links = [], loading }) {
             <TouchableOpacity
               style={styles.linkContent}
               activeOpacity={0.7}
-              onPress={() => navigation.navigate(item.path)} // Mapea 'item.path' al nombre de la pantalla
+              onPress={() => {
+                if (typeof item.path === 'string') {
+                  navigation.navigate(item.path);
+                } else {
+                  navigation.navigate(item.path.tab, { screen: item.path.screen });
+                }
+              }}
             >
               {/* Contenedor del Icono */}
               <View style={styles.iconContainer}>

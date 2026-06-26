@@ -1,14 +1,14 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { 
   View, Text, ScrollView, TextInput, TouchableOpacity, 
-  ActivityIndicator, Alert, Modal, Switch 
+  ActivityIndicator, Alert, Modal, Switch, Platform
 } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 
 import useAuthStore from '../../auth/store/useAuthStore';
 import { isAdminUser } from '../../../shared/auth/roles';
 import { bankingClient } from '../../../shared/api/adminClient';
-import { accountService } from '../../account/service/accountService';
+import { accountService } from '../../account/services/accountService';
 import PaymentHistory from '../components/PaymentHistory';
 import { styles, colors } from './ServiceScreen.styles';
 
