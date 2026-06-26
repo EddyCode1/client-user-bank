@@ -33,6 +33,12 @@ const LoginScreen = ({ navigation }) => {
     const onSubmit = async (data) => {
         try {
             await handleLogin(data);
+            const parent = navigation.getParent?.();
+            if (parent?.reset) {
+                parent.reset({ index: 0, routes: [{ name: "Main" }] });
+            } else {
+                navigation.reset({ index: 0, routes: [{ name: "Main" }] });
+            }
         } catch (error) {
             const message =
                 error.response?.data?.message || "Error al iniciar sesión";

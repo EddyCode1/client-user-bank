@@ -8,7 +8,7 @@ import { useMyAccounts } from '../../account/hooks/useMyAccounts';
 
 const QUICK_LINKS = [
   { id: 'account',      label: 'Mis Cuentas',    icon: '🏦', path: 'Account' },
-  { id: 'transactions', label: 'Transacciones',  icon: '💸', path: 'Transactions' },
+  { id: 'transactions', label: 'Transacciones',  icon: '💸', path: 'Transacciones' },
   { id: 'favorites',    label: 'Favoritos',      icon: '⭐', path: 'Favorites' },
   { id: 'profile',      label: 'Mi Perfil',      icon: '👤', path: { tab: 'More', screen: 'Profile' } },
   { id: 'products',     label: 'Productos',      icon: '📦', path: { tab: 'More', screen: 'Products' } },

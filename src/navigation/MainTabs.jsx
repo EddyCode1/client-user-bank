@@ -45,7 +45,7 @@ function MoreStackNavigator() {
             <MoreStack.Screen name="Financial" component={FinancialScreen} />
             <MoreStack.Screen name="Schedule" component={ScheduleScreen} />
             <MoreStack.Screen name="Users" component={UsersScreen} />
-            <MoreStack.Screen name="UserDetail" component={UserDetailScreen} />
+            <MoreStack.Screen name="DetalleUsuario" component={UserDetailScreen} />
         </MoreStack.Navigator>
     );
 }
@@ -93,7 +93,7 @@ export default function MainTabs() {
                 options={{ title: "Cuentas" }}
             />
             <Tab.Screen
-                name="Transactions"
+                name="Transacciones"
                 component={TransactionsStack}
                 options={{ title: "Transacciones", headerShown: false }}
             />
