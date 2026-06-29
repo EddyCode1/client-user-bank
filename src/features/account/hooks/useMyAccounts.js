@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert } from 'react-native';
+import { Alert, DeviceEventEmitter } from 'react-native';
 import { accountService } from '../services/accountService';
+import { ACCOUNTS_UPDATED_EVENT } from '../../../shared/events/bankingEvents';
 
 export function useMyAccounts({ autoLoad = true, limit = 50 } = {}) {
   const [accounts, setAccounts] = useState([]);
@@ -47,13 +48,20 @@ export function useMyAccounts({ autoLoad = true, limit = 50 } = {}) {
 
   useEffect(() => {
     if (!autoLoad) return undefined;
-    // Pequeño defer (setTimeout 0) para evitar la regla set-state-in-effect:
-    // los `setLoading(true)` internos quedan fuera de la fase de render.
-    // En React Native se remueve el objeto 'window.'
     const timer = setTimeout(() => {
       void refresh();
     }, 0);
     return () => clearTimeout(timer);
+  }, [autoLoad, refresh]);
+
+  useEffect(() => {
+    if (!autoLoad) return undefined;
+
+    const subscription = DeviceEventEmitter.addListener(ACCOUNTS_UPDATED_EVENT, () => {
+      void refresh();
+    });
+
+    return () => subscription.remove();
   }, [autoLoad, refresh]);
 
   return {

@@ -53,7 +53,7 @@ function MoreStackNavigator() {
 const TAB_ICONS = {
     Dashboard: "dashboard",
     Account: "account-balance",
-    Transactions: "swap-horiz",
+    Transacciones: "swap-horiz",
     Favorites: "star",
     More: "menu",
 };

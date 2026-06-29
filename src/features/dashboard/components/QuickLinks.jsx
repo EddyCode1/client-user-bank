@@ -9,6 +9,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { useQuickLinkFavorites } from '../hooks/useQuickLinkFavorites';
+import { navigateToMainTab } from '../../../shared/navigation/tabNavigation';
 
 // Obtener dimensiones para calcular las columnas del Grid de manera exacta
 const { width } = Dimensions.get('window');
@@ -54,9 +55,9 @@ export default function QuickLinks({ links = [], loading }) {
               activeOpacity={0.7}
               onPress={() => {
                 if (typeof item.path === 'string') {
-                  navigation.navigate(item.path);
+                  navigateToMainTab(navigation, item.path);
                 } else {
-                  navigation.navigate(item.path.tab, { screen: item.path.screen });
+                  navigateToMainTab(navigation, item.path.tab, { screen: item.path.screen });
                 }
               }}
             >

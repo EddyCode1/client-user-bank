@@ -11,9 +11,10 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { useFavorites } from '../hooks/useFavorites';
-import useAuthStore from '../../auth/store/useAuthStore';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { getUsers } from '../../user/service/userService';
 import { isAdminUser } from '../../../shared/auth/roles';
+import { navigateToMainTab } from '../../../shared/navigation/tabNavigation';
 
 // Colores de diseño mate oscuro coherentes con el dashboard
 const colors = {
@@ -185,8 +186,10 @@ export default function FavoriteScreen() {
 
   const handleTransfer = (accountNumber) => {
     if (!accountNumber) return;
-    // Transición nativa pasando parámetros de ruta
-    navigation.navigate('Transacciones', { screen: 'TransactionMain', params: { tab: 'transfer', dest: accountNumber } });
+    navigateToMainTab(navigation, 'Transacciones', {
+      screen: 'TransactionMain',
+      params: { tab: 'transfer', dest: accountNumber },
+    });
   };
 
   return (
