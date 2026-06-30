@@ -62,14 +62,16 @@ export default function AdminDepositsScreen() {
 
     useEffect(() => {
       if (seconds <= 0) return undefined;
+
       const interval = setInterval(() => {
         setSeconds((current) => Math.max(current - 1, 0));
       }, 1000);
+
       return () => clearInterval(interval);
     }, [seconds]);
 
     const expired = seconds <= 0;
-    const canRevert = deposit.canRevert && !expired;
+    const canRevert = Boolean(deposit.canRevert) && !expired;
 
     return (
       <View key={deposit.id} style={styles.depositCard}>
