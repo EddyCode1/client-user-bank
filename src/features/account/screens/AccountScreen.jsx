@@ -10,6 +10,7 @@ import { useMyAccounts } from '../hooks/useMyAccounts';
 import { accountService } from '../services/accountService';
 import AccountDetailModal from '../components/AccountDetailModal';
 import AccountFormModal from '../components/AccountFormModal';
+import { notifyAccountsUpdated } from '../../../shared/events/bankingEvents';
 
 const colors = {
   bg: '#121212',
@@ -106,6 +107,7 @@ export default function AccountScreen() {
     }
     if (result.success) {
       Alert.alert('Éxito', editingAccount ? 'Cuenta actualizada' : 'Cuenta creada correctamente');
+      notifyAccountsUpdated();
       setFormOpen(false);
       setEditingAccount(null);
       refresh();

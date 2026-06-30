@@ -3,6 +3,7 @@ import { View, Text, TextInput, TouchableOpacity, ActivityIndicator, Alert, Plat
 import { Picker } from '@react-native-picker/picker';
 import useTransactionStore from '../store/useTransactionStore';
 import { useMyAccounts } from '../../account/hooks/useMyAccounts';
+import { notifyAccountsUpdated } from '../../../shared/events/bankingEvents';
 import { styles, colors } from './TransferForm.styles';
 
 export default function TransferForm({ onSuccess, initialDestinationAccountId = '' }) {
@@ -151,6 +152,7 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
 
       if (result.success) {
         Alert.alert('Éxito', 'Transferencia realizada con éxito');
+        notifyAccountsUpdated();
         setFormData({
           sourceAccountId: '',
           destinationAccountId: '',

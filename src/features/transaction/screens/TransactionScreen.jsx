@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, TextInput, ActivityIndicator } from 'react-native';
 import useTransactionStore from '../store/useTransactionStore';
-import useAuthStore from '../../auth/store/useAuthStore';
+import { useAuthStore } from '../../../shared/store/authStore';
 import { isAdminUser } from '../../../shared/auth/roles';
+import { navigateToMainTab } from '../../../shared/navigation/tabNavigation';
 
 // Subcomponentes del módulo migrados previamente
 import TransactionTable from '../components/TransactionTable';
@@ -172,7 +173,7 @@ export default function TransactionScreen({ navigation, route }) {
         </View>
         <TouchableOpacity 
           style={styles.btnFavorites} 
-          onPress={() => navigation.navigate('Favorites')}
+          onPress={() => navigateToMainTab(navigation, 'Favorites')}
         >
           <Text>⭐</Text>
           <Text style={styles.btnFavoritesText}>Favoritos</Text>

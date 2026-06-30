@@ -5,6 +5,7 @@ import { COLORS, SPACING, FONT_SIZE } from '../../../shared/constants/theme';
 import SummaryCard from '../components/SummaryCard';
 import QuickLinks from '../components/QuickLinks';
 import { useMyAccounts } from '../../account/hooks/useMyAccounts';
+import { navigateToMainTab } from '../../../shared/navigation/tabNavigation';
 
 const QUICK_LINKS = [
   { id: 'account',      label: 'Mis Cuentas',    icon: '🏦', path: 'Account' },
@@ -67,7 +68,7 @@ export default function DashboardScreen({ navigation }) {
             icon="💰"
             loading={summaryLoading}
             accent="#00ADB5"
-            onClick={() => navigation.navigate('Account')}
+            onClick={() => navigateToMainTab(navigation, 'Account')}
             tooltip="Ver mis cuentas"
           />
         </View>
@@ -78,7 +79,7 @@ export default function DashboardScreen({ navigation }) {
             icon="🏦"
             loading={summaryLoading}
             accent="#6366F1"
-            onClick={() => navigation.navigate('Account')}
+            onClick={() => navigateToMainTab(navigation, 'Account')}
             tooltip="Ver mis cuentas"
           />
         </View>
