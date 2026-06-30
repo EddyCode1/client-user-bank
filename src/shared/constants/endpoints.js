@@ -20,8 +20,9 @@ export function getApiBaseUrl(port, pathPrefix = "") {
 
 export const ENDPOINTS = {
     AUTH:
+        process.env.EXPO_PUBLIC_API_AUTH_URL ||
         process.env.EXPO_PUBLIC_AUTH_URL ||
-        getApiBaseUrl(5025, "/api/v1/Auth"),
+        getApiBaseUrl(5025, "/api/v1"),
     API:
         process.env.EXPO_PUBLIC_API_BASE ||
         getApiBaseUrl(5025, "/api/v1"),

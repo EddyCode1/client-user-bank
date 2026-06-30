@@ -30,7 +30,18 @@ export const useAuth = () => {
         try {
             setLoading(true);
             setError(null);
-            const response = await authClient.post("/login", data);
+
+            const payload = {
+                password: data.password,
+                emailOrUsername: data.emailOrUsername,
+                email: data.emailOrUsername?.includes("@") ? data.emailOrUsername : undefined,
+                username: data.emailOrUsername?.includes("@") ? undefined : data.emailOrUsername,
+            };
+
+            console.log("Login payload:", payload);
+            const response = await authClient.post("/login", payload);
+            console.log("Login response:", response.data);
+
             const { accessToken, refreshToken, userDetails, token, user } =
                 response.data;
 
@@ -40,8 +51,20 @@ export const useAuth = () => {
             await login(mappedAccessToken, mappedUser, refreshToken);
             return response.data;
         } catch (err) {
-            setError(err.response?.data?.message || "Error al iniciar sesión");
-            throw err;
+            const message =
+                err.response?.data?.message ||
+                err.response?.data?.title ||
+                err.response?.statusText ||
+                err.message ||
+                "Error al iniciar sesión";
+            console.error("Login error details:", {
+                message,
+                status: err.response?.status,
+                data: err.response?.data,
+                request: err.config,
+            });
+            setError(message);
+            throw new Error(message);
         } finally {
             setLoading(false);
         }

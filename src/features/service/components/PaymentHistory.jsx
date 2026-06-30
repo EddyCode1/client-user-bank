@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Platform } from 'react-native';
 import { styles, colors } from '../screens/ServiceScreen.styles';
 
 export default function PaymentHistory({ payments = [], isAdmin }) {
