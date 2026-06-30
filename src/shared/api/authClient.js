@@ -1,6 +1,10 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
 import { useAuthStore } from "../store/authStore";
+import {
+    deleteRefreshToken,
+    getRefreshToken,
+    setRefreshToken,
+} from "../storage/secureStorage";
 import { ENDPOINTS } from "../constants/endpoints";
 
 const authClient = axios.create({
@@ -57,7 +61,7 @@ authClient.interceptors.response.use(
             originalRequest._retry = true;
             isRefreshing = true;
             try {
-                const refreshToken = await SecureStore.getItemAsync("refreshToken");
+                const refreshToken = await getRefreshToken();
                 if (!refreshToken) throw new Error("No refresh token");
                 const { data } = await axios.post(`${ENDPOINTS.AUTH}/refresh`, {
                     refreshToken,
@@ -65,13 +69,13 @@ authClient.interceptors.response.use(
                 const accessToken = data.accessToken || data.token;
                 const newRefreshToken = data.refreshToken || refreshToken;
                 useAuthStore.getState().setAccessToken(accessToken);
-                await SecureStore.setItemAsync("refreshToken", newRefreshToken);
+                await setRefreshToken(newRefreshToken);
                 processQueue(null, accessToken);
                 originalRequest.headers.Authorization = `Bearer ${accessToken}`;
                 return authClient(originalRequest);
             } catch (refreshError) {
                 processQueue(refreshError, null);
-                await SecureStore.deleteItemAsync("refreshToken");
+                await deleteRefreshToken();
                 useAuthStore.getState().logout();
                 return Promise.reject(refreshError);
             } finally {

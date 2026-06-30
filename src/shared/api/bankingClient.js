@@ -1,7 +1,10 @@
 import axios from "axios";
-import * as SecureStore from "expo-secure-store";
 import { ENDPOINTS } from "../constants/endpoints";
 import { useAuthStore } from "../store/authStore";
+import {
+    getRefreshToken,
+    setRefreshToken,
+} from "../storage/secureStorage";
 
 const bankingClient = axios.create({
     baseURL: ENDPOINTS.BANKING,
@@ -55,7 +58,7 @@ bankingClient.interceptors.response.use(
             isRefreshing = true;
 
             try {
-                const refreshToken = await SecureStore.getItemAsync("refreshToken");
+                const refreshToken = await getRefreshToken();
                 if (!refreshToken) throw new Error("No refresh token");
 
                 const { data } = await axios.post(`${ENDPOINTS.AUTH}/refresh`, {
@@ -65,7 +68,7 @@ bankingClient.interceptors.response.use(
                 const accessToken = data.accessToken || data.token;
                 const newRefreshToken = data.refreshToken || refreshToken;
                 useAuthStore.getState().setAccessToken(accessToken);
-                await SecureStore.setItemAsync("refreshToken", newRefreshToken);
+                await setRefreshToken(newRefreshToken);
 
                 processQueue(null, accessToken);
                 originalRequest.headers = originalRequest.headers || {};

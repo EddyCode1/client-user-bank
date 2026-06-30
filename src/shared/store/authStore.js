@@ -1,6 +1,10 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {
+    deleteRefreshToken,
+    setRefreshToken,
+} from "../storage/secureStorage";
 
 export const useAuthStore = create(
     persist(
@@ -19,9 +23,7 @@ export const useAuthStore = create(
                     isAuthenticated: true,
                 });
                 if (refreshToken) {
-                    await import("expo-secure-store").then(({ setItemAsync }) =>
-                        setItemAsync("refreshToken", refreshToken),
-                    );
+                    await setRefreshToken(refreshToken);
                 }
             },
 
@@ -42,9 +44,7 @@ export const useAuthStore = create(
                     user: null,
                     isAuthenticated: false,
                 });
-                await import("expo-secure-store").then(({ deleteItemAsync }) =>
-                    deleteItemAsync("refreshToken"),
-                );
+                await deleteRefreshToken();
             },
         }),
         {
