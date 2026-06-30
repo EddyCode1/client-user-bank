@@ -25,7 +25,7 @@ export default function TransactionTable({
     }
   };
 
-  // prueba de commit ft/zeta
+  // prueba de commit ft/zeta nuevo 
   const formatCurrency = (amount, currency = 'GTQ') => {
     const validAmount = typeof amount === 'number' ? amount : 0;
     const prefix = currency === 'GTQ' ? 'Q' : '$';
