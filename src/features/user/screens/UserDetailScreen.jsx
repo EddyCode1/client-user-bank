@@ -269,7 +269,7 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
   primaryButton: {
-    backgroundColor: '#00F0FF', // Reemplazar por tu 'var(--primary)' (ej. Turquoise)
+    backgroundColor: '#00ADB5',
     paddingHorizontal: 20,
     paddingVertical: 12,
     borderRadius: 8,
@@ -287,14 +287,14 @@ const styles = StyleSheet.create({
   },
   backButton: {
     borderWidth: 1,
-    borderColor: '#00F0FF',
+    borderColor: '#00ADB5',
     paddingHorizontal: 14,
     paddingVertical: 8,
     borderRadius: 8,
     backgroundColor: 'transparent',
   },
   backButtonText: {
-    color: '#00F0FF',
+    color: '#00ADB5',
     fontWeight: '600',
   },
   title: {
@@ -368,14 +368,14 @@ const styles = StyleSheet.create({
     fontFamily: 'Platform-specific-mono', // Opcional si tienes tipografía mono
   },
   badge: {
-    backgroundColor: 'rgba(0, 240, 255, 0.1)', // Azul/turquesa vibrante traslúcido
+    backgroundColor: 'rgba(0, 173, 181, 0.1)',
     alignSelf: 'flex-start',
     paddingHorizontal: 10,
     paddingVertical: 3,
     borderRadius: 99,
   },
   badgeText: {
-    color: '#00F0FF',
+    color: '#00ADB5',
     fontSize: 12,
     fontWeight: '600',
   },

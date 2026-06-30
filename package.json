@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "expo start",
+    "dev": "expo start --dev-client -c",
     "android": "expo start --android",
     "ios": "expo start --ios",
     "web": "expo start --web"
@@ -11,7 +12,7 @@
   "dependencies": {
     "@expo/vector-icons": "^15.1.1",
     "@react-native-async-storage/async-storage": "2.2.0",
-    "@react-native-community/datetimepicker": "^8.6.0",
+    "@react-native-community/datetimepicker": "8.6.0",
     "@react-native-picker/picker": "2.11.4",
     "@react-navigation/bottom-tabs": "^7.18.2",
     "@react-navigation/native": "^7.3.0",
@@ -20,10 +21,10 @@
     "eventemitter3": "^5.0.4",
     "expo": "~55.0.27",
     "expo-constants": "~55.0.8",
-    "expo-image-picker": "^55.0.21",
-    "expo-print": "^55.0.16",
+    "expo-image-picker": "~55.0.21",
+    "expo-print": "~55.0.16",
     "expo-secure-store": "~55.0.15",
-    "expo-sharing": "^55.0.21",
+    "expo-sharing": "~55.0.21",
     "expo-status-bar": "~55.0.6",
     "react": "19.2.0",
     "react-dom": "19.2.0",
