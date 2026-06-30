@@ -165,7 +165,7 @@ export default function ServiceScreen() {
         await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Guardar comprobante' });
       }
     } catch (error) {
-      console.error('Error generando comprobante PDF:', error);
+      console.error('Error generating service receipt PDF:', error);
       Alert.alert('Error', 'No fue posible generar el comprobante en PDF.');
     } finally {
       setDownloadLoadingService(false);
@@ -211,7 +211,7 @@ export default function ServiceScreen() {
         reference: form.reference || undefined,
         description: form.description || undefined,
       });
-      Alert.alert('Éxito', 'Pago de servicio realizado correctamente');
+      Alert.alert('Éxito', 'Pago de servicio realizado correctamente. Puedes descargar tu comprobante.');
       const receipt = {
         transactionId: result.data?.id || result.data?._id || result.data?.paymentId || `PAY-${Date.now()}`,
         dateTime: new Date().toISOString(),
@@ -400,6 +400,7 @@ export default function ServiceScreen() {
                   <PaymentReceipt receipt={serviceReceipt} />
                 </View>
               )}
+
             </View>
           </View>
 

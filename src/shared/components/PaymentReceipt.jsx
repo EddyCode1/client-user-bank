@@ -1,18 +1,18 @@
-import React from 'react'
-import { View, Text } from 'react-native'
+import React from 'react';
+import { View, Text } from 'react-native';
 
 const formatCurrency = (value, currency = 'GTQ') => {
-  const amount = Number(value ?? 0)
+  const amount = Number(value ?? 0);
   return amount.toLocaleString('es-GT', {
     style: 'currency',
     currency,
     maximumFractionDigits: 2,
-  })
-}
+  });
+};
 
 const formatDateTime = (value) => {
-  if (!value) return 'N/A'
-  const date = new Date(value)
+  if (!value) return 'N/A';
+  const date = new Date(value);
   return date.toLocaleString('es-GT', {
     year: 'numeric',
     month: 'long',
@@ -20,13 +20,20 @@ const formatDateTime = (value) => {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',
-  })
-}
+  });
+};
 
 export const buildPaymentReceiptHtml = (receipt) => {
-  if (!receipt) return ''
+  if (!receipt) return '';
+
+  const notes = [
+    receipt.reference ? `<div class="row"><div class="label">Referencia</div><div class="value">${receipt.reference}</div></div>` : '',
+    receipt.concept ? `<div class="row"><div class="label">Concepto</div><div class="value">${receipt.concept}</div></div>` : '',
+    receipt.description ? `<div class="row"><div class="label">Descripción</div><div class="value">${receipt.description}</div></div>` : '',
+  ].filter(Boolean).join('');
 
   return `
+    <!DOCTYPE html>
     <html>
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -35,6 +42,7 @@ export const buildPaymentReceiptHtml = (receipt) => {
           .container { background: #ffffff; border-radius: 16px; padding: 24px; box-shadow: 0 0 16px rgba(0,0,0,0.08); }
           .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
           .brand { font-size: 22px; font-weight: 700; color: #0f4c81; }
+          .subtitle { margin-top: 4px; font-size: 12px; color: #555; }
           .status { font-size: 12px; font-weight: 700; text-transform: uppercase; color: #ffffff; background: #0f9d58; padding: 6px 12px; border-radius: 999px; }
           .row { display: flex; justify-content: space-between; margin-bottom: 16px; }
           .label { font-size: 11px; color: #7a7a7a; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 6px; }
@@ -49,9 +57,9 @@ export const buildPaymentReceiptHtml = (receipt) => {
           <div class="header">
             <div>
               <div class="brand">Banco del Quetzal</div>
-              <div style="margin-top: 4px; font-size: 12px; color: #555;">Comprobante de operación</div>
+              <div class="subtitle">Comprobante de operación</div>
             </div>
-            <div class="status">${receipt.status}</div>
+            <div class="status">${receipt.status || 'COMPLETADO'}</div>
           </div>
           <div class="box">
             <div class="row"><div class="label">Transacción</div><div class="value">${receipt.transactionId || '-'}</div></div>
@@ -68,24 +76,15 @@ export const buildPaymentReceiptHtml = (receipt) => {
               ${receipt.exchangeRate ? `<div class="row"><div class="label">Tasa de cambio</div><div class="value">${receipt.exchangeRate}</div></div>` : ''}
             </div>
           </div>
-          ${receipt.reference || receipt.concept || receipt.description ? `
-            <div class="section">
-              <div class="section-title">Notas</div>
-              <div class="box">
-                ${receipt.reference ? `<div class="row"><div class="label">Referencia</div><div class="value">${receipt.reference}</div></div>` : ''}
-                ${receipt.concept ? `<div class="row"><div class="label">Concepto</div><div class="value">${receipt.concept}</div></div>` : ''}
-                ${receipt.description ? `<div class="row"><div class="label">Descripción</div><div class="value">${receipt.description}</div></div>` : ''}
-              </div>
-            </div>
-          ` : ''}
+          ${notes ? `<div class="section"><div class="section-title">Notas</div><div class="box">${notes}</div></div>` : ''}
         </div>
       </body>
     </html>
-  `
-}
+  `;
+};
 
 export default function PaymentReceipt({ receipt }) {
-  if (!receipt) return null
+  if (!receipt) return null;
 
   return (
     <View style={localStyles.container}>
@@ -94,8 +93,8 @@ export default function PaymentReceipt({ receipt }) {
           <Text style={localStyles.brand}>Banco del Quetzal</Text>
           <Text style={localStyles.subtitle}>Comprobante de operación</Text>
         </View>
-        <View style={localStyles.statusBadge}> 
-          <Text style={localStyles.statusText}>{receipt.status}</Text>
+        <View style={localStyles.statusBadge}>
+          <Text style={localStyles.statusText}>{receipt.status || 'COMPLETADO'}</Text>
         </View>
       </View>
 
@@ -139,7 +138,7 @@ export default function PaymentReceipt({ receipt }) {
         ) : null}
       </View>
 
-      {(receipt.reference || receipt.concept || receipt.description) && (
+      {(receipt.reference || receipt.concept || receipt.description) ? (
         <View style={[localStyles.box, { marginTop: 16 }]}> 
           {receipt.reference ? (
             <View style={localStyles.row}>
@@ -160,9 +159,9 @@ export default function PaymentReceipt({ receipt }) {
             </View>
           ) : null}
         </View>
-      )}
+      ) : null}
     </View>
-  )
+  );
 }
 
 const localStyles = {
@@ -221,4 +220,4 @@ const localStyles = {
     fontSize: 14,
     fontWeight: '700',
   },
-}
+};

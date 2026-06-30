@@ -151,7 +151,7 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
         await Sharing.shareAsync(uri, { mimeType: 'application/pdf', dialogTitle: 'Guardar comprobante' });
       }
     } catch (error) {
-      console.error('Error generando comprobante PDF:', error);
+      console.error('Error generating receipt PDF:', error);
       Alert.alert('Error', 'No fue posible generar el comprobante en PDF.');
     } finally {
       setDownloadLoading(false);
@@ -188,7 +188,7 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
           concept: formData.concept.trim() || undefined,
         };
 
-        Alert.alert('Éxito', 'Transferencia realizada con éxito');
+        Alert.alert('Éxito', 'Transferencia realizada con éxito. Puedes descargar tu comprobante.');
         notifyAccountsUpdated();
         setReceiptData(receipt);
         setFormData({
@@ -381,6 +381,7 @@ export default function TransferForm({ onSuccess, initialDestinationAccountId = 
             <PaymentReceipt receipt={receiptData} />
           </View>
         )}
+
       </View>
     </View>
   );
