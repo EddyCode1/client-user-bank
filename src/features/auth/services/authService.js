@@ -69,7 +69,7 @@ function resolveAuthApiError(error, fallbackMessage) {
 export const authService = {
   login: async (email, password) => {
     try {
-      const response = await authClient.post('/login', { emailOrUsername: email, password });
+      const response = await authClient.post('/auth/login', { emailOrUsername: email, password });
       const data = response.data || {};
       const token = data.token;
       const compactUser = data.userDetails || data.data || data.user || {};

@@ -39,7 +39,7 @@ export const useAuth = () => {
             };
 
             console.log("Login payload:", payload);
-            const response = await authClient.post("/login", payload);
+            const response = await authClient.post("/auth/login", payload);
             console.log("Login response:", response.data);
 
             const { accessToken, refreshToken, userDetails, token, user } =
