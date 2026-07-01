@@ -9,7 +9,9 @@ import {
     Alert,
 } from "react-native";
 import { useForm, Controller } from "react-hook-form";
-import { COLORS, SPACING, FONT_SIZE } from "../../../shared/constants/theme";
+import { LinearGradient } from "expo-linear-gradient";
+import Animated, { FadeInDown, FadeInUp } from "react-native-reanimated";
+import { COLORS, SPACING, FONT_SIZE, RADIUS, GRADIENTS } from "../../../shared/constants/theme";
 import Input from "../../../shared/components/Input";
 import Button from "../../../shared/components/Button";
 import { useAuth } from "../hooks/useAuth";
@@ -45,17 +47,35 @@ const LoginScreen = ({ navigation }) => {
             behavior={Platform.OS === "ios" ? "padding" : "height"}
             style={styles.container}
         >
-            <ScrollView contentContainerStyle={styles.scrollContent}>
-                <View style={styles.header}>
-                    <Image
-                        source={bankLogo}
-                        style={styles.logo}
-                        resizeMode="contain"
-                    />
-                    <Text style={styles.subtitle}>Banco del Quetzal</Text>
-                </View>
+            <LinearGradient
+                colors={GRADIENTS.primary}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.headerGradient}
+            />
+            <ScrollView
+                contentContainerStyle={styles.scrollContent}
+                showsVerticalScrollIndicator={false}
+            >
+                <Animated.View
+                    entering={FadeInDown.duration(500).springify().damping(14)}
+                    style={styles.header}
+                >
+                    <View style={styles.logoWrapper}>
+                        <Image
+                            source={bankLogo}
+                            style={styles.logo}
+                            resizeMode="contain"
+                        />
+                    </View>
+                    <Text style={styles.title}>Banco del Quetzal</Text>
+                    <Text style={styles.subtitle}>Tu banca digital, siempre contigo</Text>
+                </Animated.View>
 
-                <View>
+                <Animated.View
+                    entering={FadeInUp.duration(500).delay(150).springify().damping(16)}
+                    style={styles.card}
+                >
                     <Controller
                         control={control}
                         rules={{ required: "Email o usuario requerido" }}
@@ -102,17 +122,20 @@ const LoginScreen = ({ navigation }) => {
                     >
                         ¿Olvidaste tu contraseña?
                     </Text>
+                </Animated.View>
 
-                    <View style={styles.footer}>
-                        <Text style={styles.footerText}>¿No tienes cuenta? </Text>
-                        <Text
-                            style={styles.link}
-                            onPress={() => navigation.navigate("Register")}
-                        >
-                            Regístrate
-                        </Text>
-                    </View>
-                </View>
+                <Animated.View
+                    entering={FadeInUp.duration(500).delay(280)}
+                    style={styles.footer}
+                >
+                    <Text style={styles.footerText}>¿No tienes cuenta? </Text>
+                    <Text
+                        style={styles.link}
+                        onPress={() => navigation.navigate("Register")}
+                    >
+                        Regístrate
+                    </Text>
+                </Animated.View>
             </ScrollView>
         </KeyboardAvoidingView>
     );
@@ -123,24 +146,57 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: COLORS.background,
     },
+    headerGradient: {
+        position: "absolute",
+        top: 0,
+        left: 0,
+        right: 0,
+        height: 280,
+    },
     scrollContent: {
         flexGrow: 1,
         padding: SPACING.xl,
         justifyContent: "center",
+        paddingTop: SPACING.xxl + SPACING.lg,
     },
     header: {
         alignItems: "center",
-        marginBottom: SPACING.xxl,
+        marginBottom: SPACING.xl,
+    },
+    logoWrapper: {
+        backgroundColor: COLORS.surface,
+        borderRadius: RADIUS.xl,
+        padding: SPACING.md,
+        marginBottom: SPACING.md,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 16,
+        elevation: 8,
     },
     logo: {
-        height: 80,
-        width: 200,
-        marginBottom: SPACING.sm,
+        height: 60,
+        width: 160,
+    },
+    title: {
+        fontSize: FONT_SIZE.xxl,
+        fontWeight: "800",
+        color: COLORS.surface,
+        marginBottom: 4,
     },
     subtitle: {
-        fontSize: FONT_SIZE.lg,
-        color: COLORS.secondary,
-        marginTop: SPACING.sm,
+        fontSize: FONT_SIZE.sm,
+        color: "rgba(255,255,255,0.9)",
+    },
+    card: {
+        backgroundColor: COLORS.surface,
+        borderRadius: RADIUS.lg,
+        padding: SPACING.lg,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 10 },
+        shadowOpacity: 0.1,
+        shadowRadius: 20,
+        elevation: 6,
     },
     button: {
         marginTop: SPACING.lg,

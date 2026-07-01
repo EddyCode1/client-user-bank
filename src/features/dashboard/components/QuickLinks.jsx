@@ -1,37 +1,82 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
-  Dimensions 
-} from 'react-native';
+import { View, Text, Pressable, StyleSheet, Dimensions } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import Animated, {
+  FadeInUp,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { useQuickLinkFavorites } from '../hooks/useQuickLinkFavorites';
 import { navigateToMainTab } from '../../../shared/navigation/tabNavigation';
 
-// Obtener dimensiones para calcular las columnas del Grid de manera exacta
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
+
 const { width } = Dimensions.get('window');
 const CARD_WIDTH = (width - 48 - 12) / 2; // (Pantalla - Padding total - Gap medio) / 2 columnas
 
 const colors = {
-  bg: '#121212',
   surface: '#1E1E1E',
   border: '#2A2A2A',
   text: '#FFFFFF',
   muted: '#A0A0A0',
-  primary: '#00ADB5',       // Turquesa característico
+  primary: '#00ADB5',
   primaryMuted: 'rgba(0, 173, 181, 0.1)',
-  favorite: '#FBBF24',      // Amarillo para la estrella
-  skeleton: '#262626'
+  favorite: '#FBBF24',
+  skeleton: '#262626',
 };
+
+function QuickLinkCard({ item, index, favoriteActive, onToggleFavorite, onPress }) {
+  const scale = useSharedValue(1);
+  const pressStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  return (
+    <AnimatedPressable
+      entering={FadeInUp.duration(400).delay(index * 60).springify().damping(16)}
+      style={[styles.card, pressStyle]}
+      onPress={onPress}
+      onPressIn={() => {
+        scale.value = withSpring(0.96, { damping: 14, stiffness: 260 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 10, stiffness: 200 });
+      }}
+    >
+      <View style={styles.linkContent}>
+        <View style={styles.iconContainer}>
+          {typeof item.icon === 'string' ? (
+            <Text style={styles.iconText}>{item.icon}</Text>
+          ) : (
+            item.icon
+          )}
+        </View>
+        <Text style={styles.label} numberOfLines={2}>
+          {item.label}
+        </Text>
+      </View>
+
+      <Pressable
+        style={styles.favoriteButton}
+        hitSlop={8}
+        onPress={onToggleFavorite}
+      >
+        <MaterialCommunityIcons
+          name={favoriteActive ? "star" : "star-outline"}
+          size={20}
+          color={favoriteActive ? colors.favorite : colors.muted}
+        />
+      </Pressable>
+    </AnimatedPressable>
+  );
+}
 
 export default function QuickLinks({ links = [], loading }) {
   const navigation = useNavigation();
   const { isFavorite, toggleFavorite } = useQuickLinkFavorites();
 
-  // Esqueleto de carga (Loading State)
   if (loading) {
     return (
       <View style={styles.gridContainer}>
@@ -44,53 +89,22 @@ export default function QuickLinks({ links = [], loading }) {
 
   return (
     <View style={styles.gridContainer}>
-      {links.map((item) => {
-        const favoriteActive = isFavorite(item.id);
-
-        return (
-          <View key={item.id} style={styles.card}>
-            {/* Contenedor del Link principal */}
-            <TouchableOpacity
-              style={styles.linkContent}
-              activeOpacity={0.7}
-              onPress={() => {
-                if (typeof item.path === 'string') {
-                  navigateToMainTab(navigation, item.path);
-                } else {
-                  navigateToMainTab(navigation, item.path.tab, { screen: item.path.screen });
-                }
-              }}
-            >
-              {/* Contenedor del Icono */}
-              <View style={styles.iconContainer}>
-                {typeof item.icon === 'string' ? (
-                  <Text style={styles.iconText}>{item.icon}</Text>
-                ) : (
-                  item.icon
-                )}
-              </View>
-
-              {/* Etiqueta / Texto */}
-              <Text style={styles.label} numberOfLines={2}>
-                {item.label}
-              </Text>
-            </TouchableOpacity>
-
-            {/* Botón de Favorito Absoluto */}
-            <TouchableOpacity
-              style={styles.favoriteButton}
-              activeOpacity={0.6}
-              onPress={() => toggleFavorite(item.id)}
-            >
-              <MaterialCommunityIcons
-                name={favoriteActive ? "star" : "star-outline"}
-                size={20}
-                color={favoriteActive ? colors.favorite : colors.muted}
-              />
-            </TouchableOpacity>
-          </View>
-        );
-      })}
+      {links.map((item, index) => (
+        <QuickLinkCard
+          key={item.id}
+          item={item}
+          index={index}
+          favoriteActive={isFavorite(item.id)}
+          onToggleFavorite={() => toggleFavorite(item.id)}
+          onPress={() => {
+            if (typeof item.path === 'string') {
+              navigateToMainTab(navigation, item.path);
+            } else {
+              navigateToMainTab(navigation, item.path.tab, { screen: item.path.screen });
+            }
+          }}
+        />
+      ))}
     </View>
   );
 }
@@ -127,7 +141,7 @@ const styles = StyleSheet.create({
   linkContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingRight: 16, // Espacio preventivo para que el texto no toque la estrella
+    paddingRight: 16,
     gap: 10,
   },
   iconContainer: {

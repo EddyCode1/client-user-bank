@@ -1,50 +1,57 @@
 import React from 'react';
-import { 
-  View, 
-  Text, 
-  TouchableOpacity, 
-  StyleSheet, 
-  ActivityIndicator 
-} from 'react-native';
+import { View, Text, Pressable, StyleSheet, ActivityIndicator } from 'react-native';
+import Animated, {
+  FadeInUp,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 const colors = {
   surface: '#1E1E1E',
   border: '#2A2A2A',
   text: '#FFFFFF',
   muted: '#A0A0A0',
-  primary: '#00ADB5', // Turquesa por defecto
-  danger: '#EF4444'
+  primary: '#00ADB5',
+  danger: '#EF4444',
 };
 
-export default function SummaryCard({ 
-  title, 
-  value, 
-  icon, 
-  loading, 
-  error, 
-  empty, 
-  accent = '#00ADB5', 
-  onClick, 
-  tooltip 
+export default function SummaryCard({
+  title,
+  value,
+  icon,
+  loading,
+  error,
+  empty,
+  accent = colors.primary,
+  onClick,
+  tooltip,
+  index = 0,
 }) {
+  const scale = useSharedValue(1);
+  const pressStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
-  // Construcción del color de fondo del icono agregando opacidad en HEX
   const iconBgColor = accent.startsWith('#') && accent.length === 7 ? `${accent}22` : 'rgba(0, 173, 181, 0.13)';
 
   return (
-    <TouchableOpacity
-      style={[
-        styles.card, 
-        { borderColor: accent },
-        loading && styles.loadingOpacity
-      ]}
+    <AnimatedPressable
+      entering={FadeInUp.duration(450).delay(index * 90).springify().damping(16)}
+      style={[styles.card, { borderColor: accent }, pressStyle, loading && styles.loadingOpacity]}
       onPress={onClick}
+      onPressIn={() => {
+        scale.value = withSpring(0.97, { damping: 14, stiffness: 260 });
+      }}
+      onPressOut={() => {
+        scale.value = withSpring(1, { damping: 10, stiffness: 200 });
+      }}
       disabled={loading || !onClick}
-      activeOpacity={0.7}
       accessibilityRole="button"
       accessibilityLabel={tooltip || title}
     >
-      {/* Fila superior: Icono + Título */}
       <View style={styles.header}>
         <View style={[styles.iconContainer, { backgroundColor: iconBgColor }]}>
           {typeof icon === 'string' ? (
@@ -58,10 +65,9 @@ export default function SummaryCard({
         </Text>
       </View>
 
-      {/* Región inferior: Valor / Estados alternos */}
       <View style={styles.valueContainer}>
         {loading ? (
-          <ActivityIndicator size="small" color={colors.primary} style={styles.loader} />
+          <ActivityIndicator size="small" color={accent} style={styles.loader} />
         ) : error ? (
           <Text style={styles.errorText} numberOfLines={1}>
             {error}
@@ -76,7 +82,7 @@ export default function SummaryCard({
           </Text>
         )}
       </View>
-    </TouchableOpacity>
+    </AnimatedPressable>
   );
 }
 
